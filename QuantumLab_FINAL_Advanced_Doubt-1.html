@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuantumLab</title>
+<style>
+*{box-sizing:border-box}
+:root{--bg:#f4f8ff;--card:#fff;--text:#18233a;--muted:#61708a;--accent:#536dfe;--accent2:#9c6cff;--cyan:#19b9d2;--line:#dce6f5}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at 10% 10%,#e4f5ff 0,transparent 30%),radial-gradient(circle at 90% 20%,#efe5ff 0,transparent 28%),linear-gradient(135deg,#f7fbff,#f1f5ff);color:var(--text);min-height:100vh;overflow-x:hidden}
+body:before,body:after{content:"";position:fixed;width:180px;height:180px;border-radius:50%;pointer-events:none;z-index:-1;filter:blur(5px);opacity:.45}
+body:before{background:#bcefff;top:20%;left:-80px;animation:float 7s ease-in-out infinite}
+body:after{background:#dfc8ff;bottom:10%;right:-80px;animation:float 9s ease-in-out infinite reverse}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(25px,-30px)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(83,109,254,.15)}50%{box-shadow:0 0 0 14px rgba(83,109,254,0)}}
+@keyframes glow{0%,100%{text-shadow:0 0 0 rgba(83,109,254,0)}50%{text-shadow:0 0 20px rgba(83,109,254,.35)}}
+@keyframes rise{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shimmer{0%{background-position:0 50%}100%{background-position:200% 50%}}
+header{padding:28px 18px 24px;text-align:center;background:linear-gradient(135deg,#fff,#eef4ff);border-bottom:1px solid var(--line);box-shadow:0 5px 20px rgba(70,90,130,.08)}
+.logo{font-size:38px;font-weight:800;letter-spacing:.5px;color:#26345b;animation:glow 3s ease-in-out infinite}
+header p{margin:8px auto 0;color:var(--muted);max-width:650px}
+nav{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;justify-content:center;gap:7px;padding:11px;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+button{padding:10px 14px;border:1px solid #cbd8ee;border-radius:11px;background:linear-gradient(135deg,#fff,#edf2ff);color:#26345b;cursor:pointer;font-weight:700;transition:transform .2s,box-shadow .2s,border-color .2s}
+button:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(83,109,254,.16);border-color:#91a7ef}
+button:active{transform:scale(.97)}
+.container{max-width:950px;margin:0 auto;padding:22px 14px 50px}
+.card{background:rgba(255,255,255,.92);padding:22px;margin-bottom:18px;border:1px solid var(--line);border-radius:20px;box-shadow:0 12px 30px rgba(65,86,125,.09);animation:rise .45s ease both}
+.hero{padding:34px;text-align:center;background:radial-gradient(circle at 20% 20%,rgba(25,185,210,.12),transparent 28%),radial-gradient(circle at 80% 30%,rgba(156,108,255,.14),transparent 30%),linear-gradient(135deg,#fff,#f3f0ff)}
+.hero h2{font-size:31px;margin:10px 0 14px;color:#26345b}
+.hero p{color:var(--muted);line-height:1.65}
+.pill{display:inline-block;padding:7px 12px;border-radius:999px;border:1px solid #cdd9f0;color:#536dfe;background:#f7f9ff;font-size:13px;margin:3px;animation:pulse 3s infinite}
+h2{margin-top:0;color:#26345b}h3{color:#536dfe}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.learn-box{background:linear-gradient(145deg,#fff,#f5f8ff);padding:17px;border-radius:15px;border:1px solid var(--line);transition:.25s}
+.learn-box:hover{transform:translateY(-5px) scale(1.01);box-shadow:0 12px 24px rgba(83,109,254,.12);border-color:#b8c8ee}
+.learn-box p{color:var(--muted);line-height:1.5}
+.gate-buttons{display:flex;flex-wrap:wrap;gap:5px}
+.circuit{display:flex;flex-direction:column;gap:12px;margin-top:20px;padding:16px;background:#f5f8ff;border-radius:14px;border:1px solid var(--line);overflow-x:auto}
+.row{display:flex;align-items:center;gap:7px;min-width:max-content}
+.label{width:35px;font-weight:bold;color:#536dfe}
+.slot{width:58px;height:50px;border:1px solid #b9c9e5;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:bold;background:#fff;box-shadow:0 4px 10px rgba(80,100,140,.06)}
+.result{margin-top:16px;padding:17px;background:linear-gradient(145deg,#fff,#f5f8ff);border:1px solid var(--line);border-radius:14px}
+.prob{margin:14px 0;color:#40506b}
+.bar{height:28px;background:linear-gradient(90deg,#19b9d2,#536dfe,#9c6cff);background-size:200% 100%;animation:shimmer 3s linear infinite;border-radius:8px;margin-top:6px;color:white;line-height:28px;padding-left:9px;font-weight:800;min-width:1px}
+.measure{font-size:22px;font-weight:800;color:#536dfe}
+.hist-row{display:flex;align-items:center;gap:10px;margin:13px 0}
+.hist-label{width:45px;font-weight:bold}.hist-bar-container{flex:1;background:#e9eef8;height:30px;border-radius:7px;overflow:hidden}.hist-bar{height:100%;background:linear-gradient(90deg,#9c6cff,#536dfe,#19b9d2);background-size:200% 100%;animation:shimmer 3s linear infinite}.hist-count{width:60px;text-align:right;font-weight:bold}
+.input-box{padding:12px;font-size:18px;width:140px;border:1px solid #b9c9e5;border-radius:10px;background:#fff;color:#18233a;outline:none}
+.input-box:focus{border-color:#536dfe;box-shadow:0 0 0 4px rgba(83,109,254,.1)}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+.small{color:var(--muted);font-size:14px;line-height:1.5}
+.footer{text-align:center;color:#71809a;padding:10px 0 30px;font-size:13px}
+@media(max-width:600px){.logo{font-size:31px}.hero h2{font-size:25px}.container{padding:15px 10px 40px}button{font-size:13px;padding:9px 11px}.slot{width:50px}}
+</style>
+</head>
+<body>
+<div aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:-1;overflow:hidden">
+<span style="position:absolute;top:16%;left:12%;font-size:18px;animation:float 5s ease-in-out infinite;opacity:.45">✦</span>
+<span style="position:absolute;top:38%;right:12%;font-size:16px;animation:float 7s ease-in-out infinite;opacity:.4">✧</span>
+<span style="position:absolute;bottom:22%;left:18%;font-size:14px;animation:float 6s ease-in-out infinite reverse;opacity:.35">•</span>
+</div>
+<header>
+<div class="logo">⚛️ QuantumLab</div>
+<p>Interactive Quantum Computing Learning & Simulation Platform</p>
+</header>
+<nav>
+<button onclick="home()">🏠 Home</button>
+<button onclick="learn()">📚 Learn</button>
+<button onclick="builder()">🧩 Circuit Builder</button>
+<button onclick="simulator()">⚛️ Simulator</button>
+<button onclick="numberRunner()">🔢 Number Runner</button>
+<button onclick="quiz()">🧠 Quiz</button>
+<button onclick="gateExplorer()">🔬 Gate Explorer</button>
+<button onclick="askDoubt()">💬 Ask a Doubt</button>
+</nav>
+<div class="container" id="app"></div>
+<div class="footer">QuantumLab • Learn • Experiment • Simulate • Understand</div>
+
+<script>
+let q0=[],q1=[];
+let lastProbabilities={"00":1,"01":0,"10":0,"11":0};
+
+function home(){
+document.getElementById("app").innerHTML=`
+<div class="card hero">
+<div class="pill">QUANTUM LEARNING</div><div class="pill">SIMULATION</div>
+<h2>Explore the Quantum World 🚀</h2>
+<p>Learn quantum computing, build simple circuits, run simulations and visualize measurement results — all in one beginner-friendly platform.</p>
+<button onclick="learn()">📚 Start Learning</button>
+<button onclick="builder()">🧩 Build a Circuit</button>
+</div>
+<div class="card"><h2>✨ What you can do</h2><div class="grid">
+<div class="learn-box"><h3>📚 Learn</h3><p>Understand qubits, superposition, gates, measurement and entanglement.</p></div>
+<div class="learn-box"><h3>🧩 Build</h3><p>Create a simple two-qubit circuit using H, X, Y, Z and CNOT.</p></div>
+<div class="learn-box"><h3>📊 Visualize</h3><p>See probability bars and repeated measurement histograms.</p></div>
+<div class="learn-box"><h3>🔢 Explore</h3><p>Enter numbers and see their 4-bit binary / state-style representation.</p></div>
+</div></div>
+<div class="card"><h2>⚡ Quick Start</h2><p class="small">Try H on q0, then run the circuit. You should see approximately equal probabilities for |00⟩ and |10⟩.</p></div>`;
+}
+
+function learn(){
+document.getElementById("app").innerHTML=`
+<div class="card"><h2>📚 Learn Quantum Computing</h2><div class="grid">
+<div class="learn-box"><h3>⚛️ Qubit</h3><p>A qubit is the basic unit of quantum information. It can represent quantum states such as |0⟩ and |1⟩.</p></div>
+<div class="learn-box"><h3>🌌 Superposition</h3><p>A qubit can exist in a combination of |0⟩ and |1⟩ until it is measured.</p></div>
+<div class="learn-box"><h3>🔧 Quantum Gates</h3><p>Quantum gates are operations that change the state of qubits.</p></div>
+<div class="learn-box"><h3>🎲 Measurement</h3><p>Measurement produces a classical result from a quantum state.</p></div>
+<div class="learn-box"><h3>🔗 Entanglement</h3><p>Entanglement creates correlations between quantum systems that cannot be described as independent states.</p></div>
+<div class="learn-box"><h3>⊕ CNOT</h3><p>CNOT is a controlled two-qubit operation commonly used when demonstrating entanglement.</p></div>
+</div></div>`;
+}
+
+function builder(){
+document.getElementById("app").innerHTML=`
+<div class="card"><h2>🧩 Quantum Circuit Builder</h2>
+<p class="small">Choose a gate and the qubit where you want to place it.</p>
+<div class="gate-buttons">
+<button onclick="addGate('H',0)">H → q0</button><button onclick="addGate('X',0)">X → q0</button><button onclick="addGate('Y',0)">Y → q0</button><button onclick="addGate('Z',0)">Z → q0</button>
+<button onclick="addGate('H',1)">H → q1</button><button onclick="addGate('X',1)">X → q1</button><button onclick="addGate('Y',1)">Y → q1</button><button onclick="addGate('Z',1)">Z → q1</button>
+<button onclick="addCNOT()">CNOT</button></div>
+<div id="circuitDisplay"></div>
+<button onclick="runCircuit()">▶️ Run Circuit</button><button onclick="measureCircuit()">🎲 Measure</button><button onclick="clearCircuit()">🗑️ Clear</button>
+<div id="circuitResult"></div></div>`;
+drawCircuit();
+}
+function addGate(gate,qubit){if(qubit===0)q0.push(gate);else q1.push(gate);drawCircuit()}
+function addCNOT(){q0.push("●");q1.push("⊕");drawCircuit()}
+function drawCircuit(){
+let max=Math.max(q0.length,q1.length,1),html='<div class="circuit"><div class="row"><div class="label">q0</div>';
+for(let i=0;i<max;i++)html+=`<div class="slot">${q0[i]||""}</div>`;
+html+='</div><div class="row"><div class="label">q1</div>';
+for(let i=0;i<max;i++)html+=`<div class="slot">${q1[i]||""}</div>`;
+html+='</div></div>';document.getElementById("circuitDisplay").innerHTML=html;
+}
+function runCircuit(){
+let state=[[1,0],[0,0]];
+for(let i=0;i<Math.max(q0.length,q1.length);i++){let g0=q0[i],g1=q1[i];
+if(g0==="●"&&g1==="⊕")state=applyCNOT(state);else{if(g0&&["H","X","Y","Z"].includes(g0))state=applyGate(state,g0,0);if(g1&&["H","X","Y","Z"].includes(g1))state=applyGate(state,g1,1)}}
+lastProbabilities=probabilities(state);showCircuitResult(lastProbabilities);
+}
+function applyGate(state,gate,qubit){
+let n=[[0,0],[0,0]];
+for(let i=0;i<2;i++)for(let j=0;j<2;j++){let v=state[i][j];
+if(qubit===0){if(gate==="X")n[1-i][j]+=v;else if(gate==="H"){n[0][j]+=v/Math.sqrt(2);n[1][j]+=v/Math.sqrt(2)}else if(gate==="Z")n[i][j]+=(i===0?v:-v);else n[i][j]+=v}
+else{if(gate==="X")n[i][1-j]+=v;else if(gate==="H"){n[i][0]+=v/Math.sqrt(2);n[i][1]+=v/Math.sqrt(2)}else if(gate==="Z")n[i][j]+=(j===0?v:-v);else n[i][j]+=v}}
+return n;
+}
+function applyCNOT(state){return [[state[0][0],state[0][1]],[state[1][1],state[1][0]]]}
+function probabilities(s){let p00=s[0][0]**2,p01=s[0][1]**2,p10=s[1][0]**2,p11=s[1][1]**2,t=p00+p01+p10+p11||1;return{"00":p00/t,"01":p01/t,"10":p10/t,"11":p11/t}}
+function showCircuitResult(p){
+document.getElementById("circuitResult").innerHTML=`
+<div class="result"><h3>📊 Probability Results</h3>
+${["00","01","10","11"].map(x=>`<div class="prob">|${x}⟩<div class="bar" style="width:${Math.max(p[x]*100,0.5)}%">${(p[x]*100).toFixed(1)}%</div></div>`).join("")}
+<h3>📈 Measurement Histogram</h3><button onclick="runMeasurements(100)">🎲 Run 100 Measurements</button><button onclick="clearHistogram()">Clear Results</button><div id="histogram"></div></div>`;
+}
+function runMeasurements(shots){let c={"00":0,"01":0,"10":0,"11":0};for(let i=0;i<shots;i++){let r=Math.random(),sum=0;for(let s of ["00","01","10","11"]){sum+=lastProbabilities[s];if(r<=sum){c[s]++;break}}}showHistogram(c,shots)}
+function showHistogram(c,shots){let max=Math.max(c["00"],c["01"],c["10"],c["11"],1);let html="";for(let s of ["00","01","10","11"])html+=`<div class="hist-row"><div class="hist-label">${s}</div><div class="hist-bar-container"><div class="hist-bar" style="width:${c[s]/max*100}%"></div></div><div class="hist-count">${c[s]}</div></div>`;document.getElementById("histogram").innerHTML=html+`<p class="small"><b>Total Measurements:</b> ${shots}</p>`}
+function clearHistogram(){document.getElementById("histogram").innerHTML=""}
+function measureCircuit(){let r=Math.random(),sum=0,result="00";for(let s of ["00","01","10","11"]){sum+=lastProbabilities[s];if(r<=sum){result=s;break}}document.getElementById("circuitResult").innerHTML+=`<div class="result"><h3>🎲 Measurement Result</h3><div class="measure">Measured State: |${result}⟩</div></div>`}
+function clearCircuit(){q0=[];q1=[];lastProbabilities={"00":1,"01":0,"10":0,"11":0};builder()}
+
+let simpleState=0;
+function simulator(){
+document.getElementById("app").innerHTML=`
+<div class="card"><h2>⚛️ Simple Quantum Simulator</h2><p class="small">Start with |0⟩ and apply a gate.</p>
+<button onclick="simpleGate('H')">H Gate</button><button onclick="simpleGate('X')">X Gate</button><button onclick="simpleGate('Y')">Y Gate</button><button onclick="simpleGate('Z')">Z Gate</button><button onclick="simpleMeasure()">🎲 Measure</button><button onclick="resetSimple()">↻ Reset</button><div id="simResult"></div></div>`;
+}
+function simpleGate(g){if(g==="X"||g==="Y")simpleState=simpleState===0?1:0;else if(g==="H")simpleState=2;document.getElementById("simResult").innerHTML=`<div class="result"><h3>Gate Applied: ${g}</h3>${g==="H"?'<div class="prob">|0⟩<div class="bar" style="width:50%">50%</div></div><div class="prob">|1⟩<div class="bar" style="width:50%">50%</div></div><p class="small">H creates an approximately equal probability of |0⟩ and |1⟩.</p>':`<p>Current state: <b>${simpleState===0?"|0⟩":"|1⟩"}</b></p>`}</div>`}
+function simpleMeasure(){let result=simpleState===2?(Math.random()<.5?"0":"1"):simpleState.toString();document.getElementById("simResult").innerHTML+=`<div class="result"><h3>🎲 Measurement</h3><p class="measure">Result: |${result}⟩</p></div>`}
+function resetSimple(){simpleState=0;document.getElementById("simResult").innerHTML='<div class="result">Reset to <b>|0⟩</b>.</div>'}
+
+function numberRunner(){
+document.getElementById("app").innerHTML=`
+<div class="card"><h2>🔢 Quantum Number Runner</h2><p class="small">Enter a number from 0 to 15 and explore its 4-bit representation.</p>
+<input id="numberInput" class="input-box" type="number" min="0" max="15" placeholder="0–15"><br>
+<button onclick="runNumber()">▶️ Run</button><div id="numberResult"></div></div>`;
+}
+function runNumber(){
+let el=document.getElementById("numberInput"),input=el.value;if(input===""){document.getElementById("numberResult").innerHTML='<div class="result">Please enter a number.</div>';return}
+let number=parseInt(input);if(number<0||number>15){document.getElementById("numberResult").innerHTML='<div class="result">Please enter a number between <b>0 and 15</b>.</div>';return}
+let binary=number.toString(2).padStart(4,"0"),ones=[...binary].filter(x=>x==="1").length,zeros=4-ones;
+document.getElementById("numberResult").innerHTML=`<div class="result"><h3>⚛️ Quantum Number Result</h3><p><b>Input Number:</b> ${number}</p><p><b>4-bit Binary:</b> ${binary}</p><p><b>State-style Representation:</b> <span class="measure">|${binary}⟩</span></p><hr><p><b>0 states:</b> ${zeros} &nbsp; <b>1 states:</b> ${ones}</p><div class="prob">Binary Representation<div class="bar" style="width:${Math.max(number/15*100,3)}%">${binary}</div></div><p class="small">Educational representation only: this module converts a classical number to binary and displays it using quantum-state notation.</p></div>`;
+}
+
+/* QUIZ */
+const quizQuestions=[
+ {q:"What is the basic unit of quantum information?",a:["Bit","Qubit","Byte","Register"],c:1},
+ {q:"Which gate creates an equal superposition from |0⟩?",a:["X Gate","Z Gate","H Gate","CNOT"],c:2},
+ {q:"Which gate flips |0⟩ to |1⟩?",a:["X Gate","H Gate","Z Gate","CNOT"],c:0},
+ {q:"What does measurement produce?",a:["A classical result","A new qubit","A CPU instruction","A website"],c:0},
+ {q:"CNOT is mainly a...",a:["Single-qubit gate","Controlled two-qubit gate","Classical bit","Measurement tool"],c:1}
+];
+let quizScore=0, quizIndex=0;
+
+function quiz(){ quizScore=0; quizIndex=0; showQuizQuestion(); }
+
+function showQuizQuestion(){
+ const x=quizQuestions[quizIndex];
+ document.getElementById("app").innerHTML=`
+ <div class="card">
+  <div class="pill">QUANTUM CHALLENGE</div>
+  <h2>🧠 Quantum Quiz</h2>
+  <p class="small">Question ${quizIndex+1} of ${quizQuestions.length}</p>
+  <h3>${x.q}</h3>
+  <div class="grid">
+   ${x.a.map((v,i)=>`<button onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}. ${v}</button>`).join("")}
+  </div>
+  <div id="quizFeedback"></div>
+ </div>`;
+}
+function answerQuiz(choice){
+ const x=quizQuestions[quizIndex], correct=choice===x.c;
+ if(correct) quizScore++;
+ document.getElementById("quizFeedback").innerHTML=`
+ <div class="result">
+  <h3>${correct?"🎉 Correct!":"💡 Not quite!"}</h3>
+  <p>${correct?"Great job!":"Correct answer: <b>"+x.a[x.c]+"</b>"}</p>
+  <button onclick="nextQuiz()">${quizIndex===quizQuestions.length-1?"🏆 Show Score":"➡️ Next Question"}</button>
+ </div>`;
+}
+function nextQuiz(){
+ quizIndex++;
+ if(quizIndex<quizQuestions.length) showQuizQuestion();
+ else{
+  const percent=Math.round(quizScore/quizQuestions.length*100);
+  document.getElementById("app").innerHTML=`
+  <div class="card hero">
+   <div class="pill">QUIZ COMPLETE</div>
+   <h2>🏆 Your Score</h2>
+   <div class="measure">${quizScore} / ${quizQuestions.length}</div>
+   <p>You scored <b>${percent}%</b>.</p>
+   <button onclick="quiz()">🔄 Try Again</button>
+   <button onclick="learn()">📚 Review Concepts</button>
+  </div>`;
+ }
+}
+
+/* GATE EXPLORER */
+const gateInfo={
+ H:{name:"Hadamard Gate",symbol:"H",icon:"🌌",desc:"Creates superposition. Applied to |0⟩, it gives approximately equal probabilities of |0⟩ and |1⟩.",before:"|0⟩",after:"50% |0⟩ + 50% |1⟩"},
+ X:{name:"Pauli-X Gate",symbol:"X",icon:"🔄",desc:"Acts like a quantum NOT gate and flips |0⟩ to |1⟩ and |1⟩ to |0⟩.",before:"|0⟩",after:"|1⟩"},
+ Y:{name:"Pauli-Y Gate",symbol:"Y",icon:"🌀",desc:"A single-qubit gate that changes the qubit state with a phase effect.",before:"|0⟩",after:"|1⟩ with phase change"},
+ Z:{name:"Pauli-Z Gate",symbol:"Z",icon:"⚡",desc:"Leaves |0⟩ unchanged and changes the phase of |1⟩.",before:"|1⟩",after:"−|1⟩"},
+ CNOT:{name:"Controlled-NOT Gate",symbol:"● → ⊕",icon:"🔗",desc:"A two-qubit controlled operation. The target qubit flips when the control qubit is |1⟩.",before:"|10⟩",after:"|11⟩"}
+};
+function gateExplorer(){
+ document.getElementById("app").innerHTML=`
+ <div class="card">
+  <div class="pill">INTERACTIVE GATE GUIDE</div>
+  <h2>🔬 Quantum Gate Explorer</h2>
+  <p class="small">Choose a gate to understand what it does.</p>
+  <div class="gate-buttons">
+   ${Object.keys(gateInfo).map(k=>`<button onclick="showGate('${k}')">${gateInfo[k].icon} ${gateInfo[k].symbol}</button>`).join("")}
+  </div>
+  <div id="gateResult"></div>
+ </div>`;
+ showGate("H");
+}
+function showGate(key){
+ const g=gateInfo[key];
+ document.getElementById("gateResult").innerHTML=`
+ <div class="result">
+  <h3>${g.icon} ${g.name}</h3>
+  <div style="font-size:42px;text-align:center;font-weight:800;color:#536dfe;margin:14px">${g.symbol}</div>
+  <p>${g.desc}</p><hr>
+  <p><b>Before:</b> ${g.before}</p>
+  <p><b>After:</b> ${g.after}</p>
+  <button onclick="builder()">🧩 Try it in Circuit Builder</button>
+ </div>`;
+}
+
+home();
+
+
+/* ASK A DOUBT */
+const doubtAnswers = [
+ {keys:["qubit","what is a qubit"], topic:"Qubit", level:"Beginner", answer:"A qubit is the basic unit of quantum information. A classical bit is either 0 or 1, while a qubit can be in a quantum state described using amplitudes for |0⟩ and |1⟩."},
+ {keys:["superposition","what is superposition"], topic:"Superposition", level:"Beginner", answer:"Superposition means a quantum state can be a combination of basis states. For example, H|0⟩ = (|0⟩ + |1⟩)/√2, giving 50% probability for each outcome when measured."},
+ {keys:["hadamard","h gate","h gate do"], topic:"H Gate", level:"Beginner", answer:"The H (Hadamard) gate creates superposition. For |0⟩, H|0⟩ = (|0⟩ + |1⟩)/√2, so measurement gives 0 or 1 with equal probability."},
+ {keys:["x gate","pauli x"], topic:"X Gate", level:"Beginner", answer:"The Pauli-X gate is the quantum equivalent of a NOT operation: X|0⟩ = |1⟩ and X|1⟩ = |0⟩."},
+ {keys:["z gate","pauli z"], topic:"Z Gate", level:"Intermediate", answer:"The Z gate leaves |0⟩ unchanged but adds a phase of −1 to |1⟩: Z|0⟩=|0⟩ and Z|1⟩=−|1⟩. This phase can affect later interference."},
+ {keys:["y gate","pauli y"], topic:"Y Gate", level:"Intermediate", answer:"The Pauli-Y gate combines a bit flip with a phase change. In matrix form, Y = [[0,−i],[i,0]]. It maps |0⟩ to i|1⟩ and |1⟩ to −i|0⟩."},
+ {keys:["cnot","controlled not"], topic:"CNOT", level:"Intermediate", answer:"CNOT is a two-qubit controlled gate. If the control qubit is |1⟩, the target qubit is flipped. For example, |10⟩ becomes |11⟩, while |00⟩ stays |00⟩."},
+ {keys:["measurement","measure"], topic:"Measurement", level:"Beginner", answer:"Measurement converts a quantum state into a classical outcome. For a superposition, the probability of each outcome is determined by the squared magnitude of its amplitude."},
+ {keys:["quantum computing","what is quantum computing"], topic:"Quantum Computing", level:"Beginner", answer:"Quantum computing processes information using quantum states called qubits. Quantum algorithms use effects such as superposition, interference and entanglement to solve certain problems in ways that can differ from classical computing."},
+ {keys:["entanglement","what is entanglement"], topic:"Entanglement", level:"Intermediate", answer:"Entanglement is a quantum correlation between systems where the joint state cannot be described as independent states of each qubit. Measuring one part can be strongly correlated with the other."},
+ {keys:["probability","how probability","measurement probability"], topic:"Probability", level:"Intermediate", answer:"If a qubit is in the state α|0⟩ + β|1⟩, the probabilities are |α|² for measuring 0 and |β|² for measuring 1, with |α|² + |β|² = 1."},
+ {keys:["amplitude","quantum amplitude"], topic:"Amplitude", level:"Intermediate", answer:"A probability amplitude is a complex number associated with a quantum state. Its squared magnitude gives the probability of the corresponding measurement outcome."},
+ {keys:["interference","quantum interference"], topic:"Interference", level:"Advanced", answer:"Quantum amplitudes can reinforce or cancel one another. Quantum algorithms use this interference to increase the probability of useful outcomes and reduce the probability of unwanted ones."},
+ {keys:["bell state","bell states"], topic:"Bell State", level:"Advanced", answer:"A Bell state is a maximally entangled two-qubit state. One example is (|00⟩ + |11⟩)/√2. Measuring both qubits produces strongly correlated results."},
+ {keys:["grover","grover algorithm"], topic:"Grover's Algorithm", level:"Advanced", answer:"Grover's algorithm provides a quadratic speedup for unstructured search, using amplitude amplification to increase the probability of the desired item."},
+ {keys:["shor","shor algorithm"], topic:"Shor's Algorithm", level:"Advanced", answer:"Shor's algorithm is a quantum algorithm for integer factoring and discrete logarithms. Its importance comes from its potential to outperform known classical methods for these problems."},
+ {keys:["why quantum","advantage of quantum computing","quantum advantage"], topic:"Quantum Advantage", level:"Advanced", answer:"Quantum computers are not automatically faster for every task. Their potential advantage comes from quantum algorithms that exploit superposition, interference and entanglement for particular problems."}
+];
+
+function askDoubt(){
+ document.getElementById("app").innerHTML=`
+ <div class="card hero">
+  <div class="pill">QUANTUM HELP</div>
+  <h2>💬 Ask a Doubt</h2>
+  <p>Ask a quantum-computing question. Choose a level and explore the explanation.</p>
+  <select id="doubtLevel" class="input-box" style="width:90%;max-width:650px">
+   <option value="All">🌐 All Levels</option><option value="Beginner">🟢 Beginner</option><option value="Intermediate">🟡 Intermediate</option><option value="Advanced">🔴 Advanced</option>
+  </select><br><br>
+  <input id="doubtInput" class="input-box" style="width:90%;max-width:650px" placeholder="Example: Why does H create superposition?" onkeydown="if(event.key==='Enter')answerDoubt()">
+  <br><br><button onclick="answerDoubt()">🔍 Ask</button>
+  <div id="doubtResult"></div>
+ </div>
+ <div class="card"><h3>💡 Try asking</h3>
+ <p class="small">What is a qubit? • Why does H create superposition? • How is probability calculated? • What is a Bell state? • What is Grover's algorithm?</p></div>`;
+}
+
+function answerDoubt(){
+ const input=(document.getElementById("doubtInput").value||"").toLowerCase().trim();
+ const level=document.getElementById("doubtLevel").value;
+ const result=document.getElementById("doubtResult");
+ if(!input){result.innerHTML='<div class="result"><h3>💡 Type a question first</h3><p>Try: “How is probability calculated?”</p></div>';return;}
+ let pool=doubtAnswers.filter(x=>level==='All'||x.level===level);
+ let found=pool.find(x=>x.keys.some(k=>input.includes(k)));
+ if(!found){
+  const broad=doubtAnswers.find(x=>x.keys.some(k=>input.includes(k)));
+  if(broad){found=broad;}
+ }
+ if(found){
+  result.innerHTML=`<div class="result"><div class="pill">${found.level}</div><div class="pill">${found.topic}</div><h3>✨ Answer</h3><p>${found.answer}</p><hr><p class="small">💡 Want to go deeper? Try asking “why?”, “how?”, or ask about another gate or concept.</p></div>`;
+ }else{
+  result.innerHTML='<div class="result"><h3>🤔 I don’t have that answer yet</h3><p>Try a question about qubits, superposition, H/X/Y/Z gates, CNOT, measurement, probability, amplitudes, entanglement, interference, Bell states, Grover’s algorithm or Shor’s algorithm.</p></div>';
+ }
+}
+
+</script>
+</body>
+</html>
